@@ -9,7 +9,7 @@ from app.helpers.spotify import search_artists_songs
 
 
 chatbot_ns = Namespace('chatbot', description='Webhooks Messenger Facebook')
-
+#https://a7fc5a17bc0e.ngrok.io/api/chatbot/webhook
 @chatbot_ns.route('/webhook')
 class webhook(Resource):
     @chatbot_ns.doc('webhook_connect')
@@ -28,11 +28,12 @@ class webhook(Resource):
     @chatbot_ns.doc('webhook_messages')
     def post(self):
         payload = self.api.payload
+        
+        print(payload)
         for event in payload['entry']:
             messaging = event['messaging']
             for message in messaging:
  
-                print(message)
                 if message.get("message"):
                     message_text = message['message']['text']
 

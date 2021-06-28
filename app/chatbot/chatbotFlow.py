@@ -5,7 +5,7 @@ def initial_message(**kwargs):
     # https://developers.facebook.com/docs/messenger-platform/send-messages/quick-replies
     return sender_graph(recipient_id=kwargs['recipient_id'], 
             message={
-                "text": "Bienvenido xxxxx, escriba un artista o canción"
+                "text": "Bienvenido Cesar, escriba un artista o canción"
             }
     )
 
@@ -88,6 +88,11 @@ def artists_tracks_message(**kwargs):
                     "url": artist["external_urls"]["spotify"],
                     "title": "Abrir en Spotify"
                 },
+                {
+                    "type":"web_url",
+                    "url": artist["external_urls"]["spotify"],
+                    "title": "Agregar"
+                },
                 # {
                 #     "type":"postback",
                 #     "title":"Start Chatting",
@@ -99,7 +104,6 @@ def artists_tracks_message(**kwargs):
         elements.append(element)
 
     for track in kwargs["tracks_artists"]['tracks']["items"][:3]:
-        print(track["album"]["name"])
         if len(track["album"].get("images")) > 0:
             image_url = track["album"].get("images")[0].get("url")
         else:
