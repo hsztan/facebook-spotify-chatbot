@@ -7,6 +7,11 @@ from flask_restx import Api
 
 
 app = Flask(__name__)
+app.config.from_object(Config)
+
+db = SQLAlchemy(app)
+
+migrate = Migrate(app, db)
 
 api = Api(app, 
         version='1.0',
