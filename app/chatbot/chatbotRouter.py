@@ -4,7 +4,8 @@ from json import dumps
 from requests import post as post_request, delete as delete_request
 from flask_restx import Resource, Namespace
 from app.chatbot.chatbotRequest import ChatbotRequest
-from app.chatbot.chatbotFlow import initial_message, tracks_message
+from app.chatbot.chatbotFlow import initial_message, tracks_message, send_playlist
+from app.user.userModel import UserModel
 from app.helpers.spotify import search_songs
 
 
@@ -40,8 +41,17 @@ class webhook(Resource):
                     if message_text:
                         recipient_id = message['sender']['id']
 
-                        tracks = search_songs(message_text)
-                        tracks_message(recipient_id=recipient_id, tracks=tracks)
+                        if "playlist" in message_text:
+                            if UserModel.user_exists(recipient_id):
+                                print("USER EXISTS")
+                                send_playlist(recipient_id=recipient_id)
+                            else:
+                                print ("USER DOESNT EXIST")
+                                UserModel.create(recipient_id)
+
+                        else:
+                            tracks = search_songs(message_text)
+                            tracks_message(recipient_id=recipient_id, tracks=tracks)
 
 
                 recipient_id = message['sender']['id']

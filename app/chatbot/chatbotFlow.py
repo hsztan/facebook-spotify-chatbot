@@ -49,6 +49,14 @@ def tracks_message(**kwargs):
         }
     })
 
+def send_playlist(**kwargs):
+    for e in range(1, 7):
+        sender_graph(recipient_id=kwargs['recipient_id'], 
+            message={
+                "text": f"Song {e}"
+            })
+    return True
+
 def random_messages(**kwargs):
     palabras = ['que tal', 'no hay de que', 'no molestes', 'te observo']
     return sender_graph(recipient_id=kwargs['recipient_id'], message=choice(palabras))
