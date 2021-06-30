@@ -15,7 +15,7 @@ class TracksModel(db.Model):
     #relationships
     #TODO
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    user = db.Relationship('UserModel', uselist=False, backpopulates='tracks')
+    user = db.relationship('UserModel', uselist=False, back_populates='tracks')
 
     def __repr__(self):
         return f"Track: {self.name}"

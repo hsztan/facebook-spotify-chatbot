@@ -1,5 +1,4 @@
 from flask import Flask
-from pathlib import Path
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -24,4 +23,4 @@ api = Api(app,
         prefix='/api/',
         doc='/docs/')
 
-ma = Marshmallow(db)
+ma = Marshmallow(app)
