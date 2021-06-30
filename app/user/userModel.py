@@ -1,4 +1,4 @@
-from app import db, ma
+from app import db
 from sqlalchemy.sql import func
 
 
@@ -13,12 +13,7 @@ class UserModel(db.Model):
     updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())
     #RELATIONSHIPS
     #TODO
-    tracks = db.Relationship('TracksModel', backpopulates='user')
+    tracks = db.relationship('TracksModel', back_populates='user')
 
     def __repr__(self):
         return f"User: {self.username}"
-
-
-class UserSchema(ma.Schema):
-    class Meta:
-        fields = ['id', 'username']
