@@ -13,9 +13,7 @@ def initial_message(**kwargs):
     else:
         return sender_graph(recipient_id=kwargs['recipient_id'], 
             message={
-                "type":"postback",
-                "title":"Bienvenido a Spotty the Botty! Cuál es su nombre?",
-                "payload": "NEW_USER_PAYLOAD"
+                "text":"Bienvenido a Spotty the Botty! Cuál es su nombre?"
             })
 
 def tracks_message(**kwargs):
