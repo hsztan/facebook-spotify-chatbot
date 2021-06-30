@@ -1,13 +1,22 @@
 from app.helpers import sender_graph
 from random import choice
+from app.user.userModel import UserModel
 
 def initial_message(**kwargs):
-    # https://developers.facebook.com/docs/messenger-platform/send-messages/quick-replies
-    return sender_graph(recipient_id=kwargs['recipient_id'], 
+    recipient_id = kwargs["recipient_id"]
+    user = UserModel.user_exists(recipient_id)
+    if user:
+        return sender_graph(recipient_id=kwargs['recipient_id'], 
             message={
-                "text": "Bienvenido Cesar, escriba un artista o canción"
-            }
-    )
+                "text": f"Bienvenido {user.name if user.name else 'humano'}, escriba el nombre de una canción, artista o escriba la palabra <playlist> para visualizar su música favorita"
+            })
+    else:
+        return sender_graph(recipient_id=kwargs['recipient_id'], 
+            message={
+                "type":"postback",
+                "title":"Bienvenido a Spotty the Botty! Cuál es su nombre?",
+                "payload": "NEW_USER_PAYLOAD"
+            })
 
 def tracks_message(**kwargs):
     # https://developers.facebook.com/docs/messenger-platform/send-messages/template/generic

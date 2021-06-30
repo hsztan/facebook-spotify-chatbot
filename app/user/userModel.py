@@ -21,8 +21,8 @@ class UserModel(db.Model):
         return f"User: {self.username}"
 
     @staticmethod
-    def create(username):
-        db.session.add(UserModel(username=username))
+    def create(username, name="humano"):
+        db.session.add(UserModel(username=username, name=name))
         db.session.commit()
 
     @staticmethod

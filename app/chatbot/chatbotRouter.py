@@ -47,7 +47,7 @@ class webhook(Resource):
                                 send_playlist(recipient_id=recipient_id)
                             else:
                                 print ("USER DOESNT EXIST")
-                                UserModel.create(recipient_id)
+                                # UserModel.create(recipient_id)
 
                         else:
                             tracks = search_songs(message_text)
@@ -62,6 +62,9 @@ class webhook(Resource):
                     postback = message['postback'].get('payload')
                     if postback == 'GET_STARTED_PAYLOAD':
                         initial_message(recipient_id=recipient_id)
+                    elif postback == "NEW_USER_PAYLOAD":
+                        UserModel.create(recipient_id, message['message']['text'])
+
 
         return 'Mensaje recibido', 200
 
