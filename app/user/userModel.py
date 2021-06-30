@@ -1,5 +1,6 @@
 from app import db, ma
 from sqlalchemy.sql import func
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 
 class UserModel(db.Model):

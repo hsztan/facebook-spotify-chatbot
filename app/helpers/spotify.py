@@ -19,7 +19,6 @@ def auth_token():
     message = auth_client.encode('ascii')
     bs4_encode = b64encode(message)
     b64_token = bs4_encode.decode('ascii')
-    print(b64_token)
 
     headers = {
         'Authorization': f'Basic {b64_token}'
@@ -45,10 +44,10 @@ def search_artist_name(name):
     response = get(SEARCH_ENDPOINT, params=params, headers=headers)
     return response.json()
 
-def search_artists_songs(name):
+def search_songs(name):
     params = {
         'q': name,
-        'type': 'track,artist'
+        'type': 'track'
     }
     token = auth_token()
     headers = {

@@ -2,6 +2,7 @@ from app import db, ma
 from sqlalchemy.sql import func
 
 
+
 class TracksModel(db.Model):
     __tablename__ = 'tracks'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

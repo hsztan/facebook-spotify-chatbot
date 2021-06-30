@@ -4,8 +4,8 @@ from json import dumps
 from requests import post as post_request, delete as delete_request
 from flask_restx import Resource, Namespace
 from app.chatbot.chatbotRequest import ChatbotRequest
-from app.chatbot.chatbotFlow import initial_message, artists_tracks_message
-from app.helpers.spotify import search_artists_songs
+from app.chatbot.chatbotFlow import initial_message, tracks_message
+from app.helpers.spotify import search_songs
 
 
 chatbot_ns = Namespace('chatbot', description='Webhooks Messenger Facebook')
@@ -40,8 +40,8 @@ class webhook(Resource):
                     if message_text:
                         recipient_id = message['sender']['id']
 
-                        tracks_artists = search_artists_songs(message_text)
-                        artists_tracks_message(recipient_id=recipient_id, tracks_artists=tracks_artists)
+                        tracks = search_songs(message_text)
+                        tracks_message(recipient_id=recipient_id, tracks=tracks)
 
 
                 recipient_id = message['sender']['id']
