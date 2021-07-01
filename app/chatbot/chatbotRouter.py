@@ -6,7 +6,8 @@ from flask_restx import Resource, Namespace
 from app.chatbot.chatbotRequest import ChatbotRequest
 from app.chatbot.chatbotFlow import initial_message, tracks_message, send_playlist
 from app.user.userModel import UserModel
-from app.helpers.spotify import search_songs, get_track
+from app.track.tracksModel import TracksModel
+from app.helpers.spotify import TRACKS_ARTIST_ENDPOINT, search_songs, get_track
 
 
 chatbot_ns = Namespace('chatbot', description='Webhooks Messenger Facebook')
@@ -64,11 +65,16 @@ class webhook(Resource):
                     if payload == 'GET_STARTED_PAYLOAD':
                         initial_message(recipient_id=recipient_id)
                     elif "Agregar" in message["postback"]["title"]:
+                        # add track to user
                         track = get_track(payload)
-                        print(track)
-
-                        # print("user starting to be created")
-                        # UserModel.create(recipient_id, message['message']['text'])
+                        track_id = payload
+                        track_name = track["album"]["name"]
+                        track_artist = track["artists"][0]["name"]
+                        track_url = track["album"]["external_urls"]["spotify"]
+                        track_image_url = track["album"].get("images")[
+                            0].get("url")
+                        TracksModel.add_track(track_id, track_name, track_artist,
+                                              track_url, track_image_url, recipient_id)
 
         return 'Mensaje recibido', 200
 
