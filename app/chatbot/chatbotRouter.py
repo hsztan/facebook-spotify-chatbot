@@ -6,11 +6,13 @@ from flask_restx import Resource, Namespace
 from app.chatbot.chatbotRequest import ChatbotRequest
 from app.chatbot.chatbotFlow import initial_message, tracks_message, send_playlist
 from app.user.userModel import UserModel
-from app.helpers.spotify import search_songs
+from app.helpers.spotify import search_songs, get_track
 
 
 chatbot_ns = Namespace('chatbot', description='Webhooks Messenger Facebook')
-#https://a7fc5a17bc0e.ngrok.io/api/chatbot/webhook
+# https://a7fc5a17bc0e.ngrok.io/api/chatbot/webhook
+
+
 @chatbot_ns.route('/webhook')
 class webhook(Resource):
     @chatbot_ns.doc('webhook_connect')
@@ -29,12 +31,12 @@ class webhook(Resource):
     @chatbot_ns.doc('webhook_messages')
     def post(self):
         payload = self.api.payload
-        
+
         print(payload)
         for event in payload['entry']:
             messaging = event['messaging']
             for message in messaging:
- 
+
                 if message.get("message"):
                     message_text = message['message']['text']
 
@@ -47,70 +49,74 @@ class webhook(Resource):
                         if "playlist" in message_text:
                             if UserModel.user_exists(recipient_id):
                                 send_playlist(recipient_id=recipient_id)
-                            
 
                         else:
                             tracks = search_songs(message_text)
-                            tracks_message(recipient_id=recipient_id, tracks=tracks)
-
+                            tracks_message(
+                                recipient_id=recipient_id, tracks=tracks)
 
                 recipient_id = message['sender']['id']
                 if message.get('postback') \
-                    and message['postback'] \
-                    and message['postback'].get('payload'):
+                        and message['postback'] \
+                        and message['postback'].get('payload'):
 
-                    postback = message['postback'].get('payload')
-                    if postback == 'GET_STARTED_PAYLOAD':
+                    payload = message['postback'].get('payload')
+                    if payload == 'GET_STARTED_PAYLOAD':
                         initial_message(recipient_id=recipient_id)
+                    elif "Agregar" in message["postback"]["title"]:
+                        track = get_track(payload)
+                        print(track)
 
                         # print("user starting to be created")
                         # UserModel.create(recipient_id, message['message']['text'])
 
-
         return 'Mensaje recibido', 200
+
 
 @chatbot_ns.route('/setup')
 class bot_setup(Resource):
     @chatbot_ns.doc('chatbot_setup')
     def get(self):
         '''Setup Get Started'''
-        post_request('https://graph.facebook.com/v11.0/me/messenger_profile', 
-            params={
-                'access_token': getenv('FB_PAGE_TOKEN')
-            },
-            headers={
-                'Content-Type': 'application/json'
-            },
-            data=dumps({
-                'get_started': {
-                    'payload': 'GET_STARTED_PAYLOAD'
-                },
-                'greeting': [
-                    {
-                        'locale': 'default',
-                        'text': 'Hola {{user_full_name}} !'
-                    }
-                ]
-            }))
+        post_request('https://graph.facebook.com/v11.0/me/messenger_profile',
+                     params={
+                         'access_token': getenv('FB_PAGE_TOKEN')
+                     },
+                     headers={
+                         'Content-Type': 'application/json'
+                     },
+                     data=dumps({
+                         'get_started': {
+                             'payload': 'GET_STARTED_PAYLOAD'
+                         },
+                         'greeting': [
+                             {
+                                 'locale': 'default',
+                                 'text': 'Hola {{user_full_name}} !'
+                             }
+                         ]
+                     }))
 
         return 'Success Setup', 200
+
 
 @chatbot_ns.route('/setup/remove')
 class bot_setup_remove(Resource):
     @chatbot_ns.doc('chatbot_remove_setup')
     def delete(self):
         '''Remove Get Started and Greeting'''
-        delete_request('https://graph.facebook.com/v11.0/me/messenger_profile', 
-            params={
-                'access_token': getenv('FB_PAGE_TOKEN')
-            },
-            headers={
-                'Content-Type': 'application/json'
-            },
-            data=dumps({
-                'fields': ['get_started', 'greeting']
-            }))
+        delete_request('https://graph.facebook.com/v11.0/me/messenger_profile',
+                       params={
+                           'access_token': getenv('FB_PAGE_TOKEN')
+                       },
+                       headers={
+                           'Content-Type': 'application/json'
+                       },
+                       data=dumps({
+                           'fields': ['get_started', 'greeting']
+                       }))
 
         return 'Success Deleted', 200
+
 
 api.add_namespace(chatbot_ns)

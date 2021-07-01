@@ -44,6 +44,7 @@ def search_artist_name(name):
     response = get(SEARCH_ENDPOINT, params=params, headers=headers)
     return response.json()
 
+
 def search_songs(name):
     params = {
         'q': name,
@@ -66,8 +67,9 @@ def get_artist(artist_id):
     response = get(url, headers=headers)
     return response.json()
 
+
 def get_track(track_id):
-    url = GET_ARTIST_ENDPOINT.format(id=track_id)
+    url = TRACK_ID_ENDPOINT.format(id=track_id)
     token = auth_token()
     headers = {
         'Authorization': f'Bearer {token}'
