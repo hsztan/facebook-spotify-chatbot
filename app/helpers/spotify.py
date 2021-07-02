@@ -8,6 +8,7 @@ GET_ARTIST_ENDPOINT = 'https://api.spotify.com/v1/artists/{id}'
 RELATED_ARTIST_ENDPOINT = 'https://api.spotify.com/v1/artists/{id}/related-artists'
 TRACKS_ARTIST_ENDPOINT = 'https://api.spotify.com/v1/artists/{id}/top-tracks'
 TRACK_ID_ENDPOINT = 'https://api.spotify.com/v1/tracks/{id}'
+PLAYLISTS_ID_ENDPOINT = 'https://api.spotify.com/v1/users/{user_id}/playlists'
 
 
 def auth_token():
@@ -30,6 +31,21 @@ def auth_token():
 
     response = post(AUTH_ENDPOINT, headers=headers, data=data)
     return response.json()['access_token']
+
+
+def create_playlist(name):
+    client_id = getenv('SPOTIFY_CLIENT_ID')
+
+    url = PLAYLISTS_ID_ENDPOINT.format(user_id=client_id)
+    token = auth_token()
+    headers = {
+        'Authorization': f'Bearer {token}'
+    }
+    data = {
+        'name': name
+    }
+    response = post(url, headers=headers, data=data)
+    return response.json()
 
 
 def search_artist_name(name):

@@ -49,7 +49,10 @@ class webhook(Resource):
 
                         if "playlist" in message_text:
                             if UserModel.user_exists(recipient_id):
-                                send_playlist(recipient_id=recipient_id)
+                                return send_playlist(recipient_id=recipient_id)
+
+                        if "menu" or "ayuda" in message_text:
+                            initial_message(recipient_id=recipient_id)
 
                         else:
                             tracks = search_songs(message_text)

@@ -60,10 +60,12 @@ def tracks_message(**kwargs):
 
 
 def send_playlist(**kwargs):
-    for e in range(1, 7):
+    user = UserModel.query.filter_by(username=kwargs["recipient_id"]).first()
+    tracks = user.tracks
+    for index, track in enumerate(tracks):
         sender_graph(recipient_id=kwargs['recipient_id'],
                      message={
-            "text": f"Song {e}"
+            "text": f"{index + 1} {track.name}"
         })
     return True
 
