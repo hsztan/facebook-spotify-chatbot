@@ -4,6 +4,10 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 
 class UserModel(db.Model):
+    # bot flags
+    flag_get_track = False
+
+    # model
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(100), unique=True)
@@ -13,8 +17,8 @@ class UserModel(db.Model):
     created_at = db.Column(db.DateTime(timezone=True),
                            server_default=func.now())
     updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())
-    #RELATIONSHIPS
-    #TODO
+    # RELATIONSHIPS
+    # TODO
     tracks = db.relationship('TracksModel', back_populates='user')
 
     def __repr__(self):
@@ -28,6 +32,7 @@ class UserModel(db.Model):
     @staticmethod
     def user_exists(username):
         return UserModel.query.filter_by(username=username).first()
+
 
 class UserSchema(ma.Schema):
     class Meta:

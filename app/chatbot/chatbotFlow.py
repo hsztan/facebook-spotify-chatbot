@@ -18,6 +18,38 @@ def initial_message(**kwargs):
         })
 
 
+def display_track_message(**kwargs):
+    print("INSIDIDIDIDIDIDIDE DISPLAY TRACK MESSSSAGE")
+    track_num = int(kwargs["track"])
+    tracks = UserModel.query.filter_by(
+        username=kwargs["recipient_id"]).first().tracks
+    track = tracks[track_num-1]
+    print(track_num)
+    print(tracks)
+    print(track)
+
+    return sender_graph(recipient_id=kwargs["recipient_id"], message={
+        "attachment": {
+            "type": "template",
+            "payload": {
+                "template_type": "generic",
+                "elements": [{
+                    "title": track.name,
+                    "image_url": track.image_url,
+                    "subtitle": track.artist,
+                    "buttons": [
+                        {
+                            "type": "web_url",
+                            "url": track.url,
+                            "title": "Abrir en Spotify"
+                        }
+                    ],
+                }]
+            }
+        }
+    })
+
+
 def tracks_message(**kwargs):
     # https://developers.facebook.com/docs/messenger-platform/send-messages/template/generic
     elements = []
@@ -65,9 +97,13 @@ def send_playlist(**kwargs):
     for index, track in enumerate(tracks):
         sender_graph(recipient_id=kwargs['recipient_id'],
                      message={
-            "text": f"{index + 1} {track.name}"
+            "text": f"{index + 1} - {track.name} de {track.artist}"
         })
-    return True
+    UserModel.flag_get_track = True
+    return sender_graph(recipient_id=kwargs['recipient_id'],
+                        message={
+        "text": f"Favor ingrese el número de canción que desea visualizar:"
+    })
 
 
 def track_added_message(**kwargs):

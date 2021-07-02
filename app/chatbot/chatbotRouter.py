@@ -4,7 +4,7 @@ from json import dumps
 from requests import post as post_request, delete as delete_request
 from flask_restx import Resource, Namespace
 from app.chatbot.chatbotRequest import ChatbotRequest
-from app.chatbot.chatbotFlow import initial_message, tracks_message, send_playlist
+from app.chatbot.chatbotFlow import display_track_message, initial_message, tracks_message, send_playlist
 from app.user.userModel import UserModel
 from app.track.tracksModel import TracksModel
 from app.helpers.spotify import TRACKS_ARTIST_ENDPOINT, search_songs, get_track
@@ -51,9 +51,12 @@ class webhook(Resource):
                             if UserModel.user_exists(recipient_id):
                                 return send_playlist(recipient_id=recipient_id)
 
-                        if "menu" or "ayuda" in message_text:
-                            initial_message(recipient_id=recipient_id)
+                        if "start" in message_text:
+                            return initial_message(recipient_id=recipient_id)
 
+                        if UserModel.flag_get_track == True:
+                            UserModel.flag_get_track = False
+                            return display_track_message(recipient_id=recipient_id, track=message_text.strip())
                         else:
                             tracks = search_songs(message_text)
                             tracks_message(
